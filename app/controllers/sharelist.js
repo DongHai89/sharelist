@@ -16,9 +16,9 @@ const isProxyPath = (path , paths) => {
 
 const output = async (ctx , data)=>{
 
-  const isPreview = ctx.request.querystring.indexOf('preview') >= 0
+  const isPreview = ctx.runtime.isPreview
 
-  const isforward = ctx.request.querystring.indexOf('forward') >= 0
+  const isforward = ctx.runtime.isForward
 
   const downloadLinkAge = config.getConfig('max_age_download')
 
@@ -128,6 +128,19 @@ module.exports = {
 
       let sign = md5(config.getConfig('max_age_download_sign') + Math.floor(Date.now() / downloadLinkAge))
 
+      let sort = ctx.runtime.sort
+
+      if(sort){
+        if(sort.size){
+          let r = sort.size == 'desc' ? 1 : -1
+          data.children = data.children.sort((a,b) => a.size > b.size ? r : -r )
+        }
+        if(sort.time){
+          let r = sort.time == 'desc' ? 1 : -1
+          data.children = data.children.sort((a,b) => a.updated_at > b.updated_at ? r : -r)
+        }
+      }
+
       for(let i of data.children){
         if(
           isAdmin || 
@@ -148,9 +161,10 @@ module.exports = {
           }
           
           if(i.hidden !== true)
-            ret.data.push( { href , type : i.type , size: i.displaySize , updated_at:i.updated_at , name:i.name})
+            ret.data.push( { href , type : i.type , _size:i.size,size: i.displaySize , updated_at:i.updated_at , name:i.name})
         }
       }
+
 
       let readme_enable = !!config.getConfig('readme_enable')
       if( readme_enable ){
@@ -176,7 +190,7 @@ module.exports = {
       })
     }
     else if(data.type == 'auth_response'){
-      let result = {status:0 , message:"success"}
+      let result = {status:0 , message:"success" , rurl:ctx.query.rurl}
       if(!data.result){
         result.status = 403
         result.message = '验证失败'

@@ -1,5 +1,9 @@
 # ShareList
 
+[![Build Status](https://api.travis-ci.com/reruin/sharelist.svg?branch=master)](https://travis-ci.com/reruin/sharelist)
+
+[ENGLISH](README-en.md)  
+
 ShareList 是一个易用的网盘工具，支持快速挂载 GoogleDrive、OneDrive ，可通过插件扩展功能。
 
 ## 目录
@@ -9,6 +13,7 @@ ShareList 是一个易用的网盘工具，支持快速挂载 GoogleDrive、OneD
   * [挂载GoogleDrive](#挂载GoogleDrive) 
   * [挂载OneDrive（含世纪互联）](#挂载挂载OneDrive) 
   * [挂载天翼云盘（支持账号密码挂载）](#挂载天翼云盘) 
+  * [挂载和彩云](#挂载和彩云) 
   * [挂载本地文件](#挂载本地文件) 
   * [挂载GitHub](#挂载GitHub) 
   * [挂载蓝奏云](#挂载蓝奏云) 
@@ -26,6 +31,7 @@ ShareList 是一个易用的网盘工具，支持快速挂载 GoogleDrive、OneD
   * [文件/目录上传](#文件目录上传) 
   * [WebDAV导出](#WebDAV导出)
   * [下载链接有效期](#下载链接有效期) 
+  * [验证码相关](#验证码相关) 
   * [Nginx/Caddy反代注意事项](#Nginx(Caddy)反代注意事项) 
 * [插件开发](#插件开发) 
 
@@ -130,7 +136,21 @@ ShareList 是一个易用的网盘工具，支持快速挂载 GoogleDrive、OneD
 
 ***
 
+### 挂载和彩云
+
+由[drive.caiyun.js](app/plugins/drive.caiyun.js)插件实现。  
+```
+挂载标示：cy
+挂载内容：  
+    //用户名/初始文件夹ID?password=密码 
+    /
+```
+建议填写```/```，ShareList将自动开启挂载向导，按指示填写用户名密码即可。   
+
+***
+
 ### 挂载本地文件
+
 由[drive.fs.js](app/plugins/drive.fs.js)插件实现。  
 ```
 挂载标示：fs   
@@ -282,6 +302,10 @@ data:
 ### 下载链接有效期
 后台管理，常规设置，设置```下载链接有效期```后，下载链接将在此时间段内有效。若要关闭此功能，请设置为0。     
 
+### 验证码相关
+后台管理，常规设置，设置```验证码识别接口```后，可完成某些插件的自动打码，留空时系统默认使用```https://api.reruin.net/ocr```(tesseract，准确率一般) 完成打码。   
+自定义该接口需接收如下请求，```{image:'base64 encoded image',type:'','lang':''}```。   
+
 ### Nginx(Caddy)反代注意事项
 使用反代时，请添加以下配置。  
 Nginx   
@@ -345,3 +369,7 @@ WebDAV 目录 `http://localhost:33001/webdav`
 ### Heroku
 
 [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/reruin/sharelist-heroku)
+
+### Vercel
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/import/project?template=https://github.com/reruin/sharelist)
